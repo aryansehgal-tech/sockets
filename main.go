@@ -7,6 +7,7 @@ import (
 
 	"sockets/handlers"
 	"sockets/internal/chat"
+	"os"
 )
 
 func main() {
@@ -21,5 +22,11 @@ func main() {
 
 	r.GET("/ws", handlers.WebSocketHandler(hub))
 
-	r.Run("0.0.0.0:8080")
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
+
+	r.Run(":" + port)
+
 }
