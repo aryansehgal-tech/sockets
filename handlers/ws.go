@@ -7,7 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
 
-	"chatapp/internal/chat"
+	"sockets/internal/chat"
 )
 
 var upgrader = websocket.Upgrader{

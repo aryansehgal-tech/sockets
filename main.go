@@ -5,8 +5,8 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"chatapp/handlers"
-	"chatapp/internal/chat"
+	"sockets/handlers"
+	"sockets/internal/chat"
 )
 
 func main() {
