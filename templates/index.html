@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Go Chat</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f6f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .chat-container {
+            width: 400px;
+            height: 600px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-header {
+            padding: 15px;
+            background: #4f46e5;
+            color: white;
+            font-weight: bold;
+            text-align: center;
+            border-top-left-radius: 12px;
+            border-top-right-radius: 12px;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+        }
+
+        .message {
+            margin-bottom: 10px;
+            padding: 8px 12px;
+            background: #e5e7eb;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .chat-input {
+            display: flex;
+            padding: 10px;
+            border-top: 1px solid #ddd;
+        }
+
+        .chat-input input {
+            flex: 1;
+            padding: 8px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+        }
+
+        .chat-input button {
+            margin-left: 8px;
+            padding: 8px 12px;
+            border: none;
+            background: #4f46e5;
+            color: white;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .join-section {
+            padding: 15px;
+            display: flex;
+            gap: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="chat-container">
+    <div class="chat-header">Broadcast Chat</div>
+
+    <div class="join-section" id="joinSection">
+        <input type="text" id="username" placeholder="Enter username">
+        <button onclick="connect()">Join</button>
+    </div>
+
+    <div class="chat-messages" id="messages"></div>
+
+    <div class="chat-input">
+        <input type="text" id="msg" placeholder="Type message..." disabled>
+        <button onclick="send()" id="sendBtn" disabled>Send</button>
+    </div>
+</div>
+
+<script>
+    let ws;
+
+    function connect() {
+        const username = document.getElementById("username").value;
+        if (!username) {
+            alert("Enter username");
+            return;
+        }
+
+        const protocol = location.protocol === "https:" ? "wss://" : "ws://";
+        ws = new WebSocket(protocol + location.host + "/ws?username=" + username);
+
+
+        ws.onopen = function() {
+            document.getElementById("joinSection").style.display = "none";
+            document.getElementById("msg").disabled = false;
+            document.getElementById("sendBtn").disabled = false;
+        };
+
+        ws.onmessage = function(event) {
+            const div = document.createElement("div");
+            div.className = "message";
+            div.innerText = event.data;
+
+            const container = document.getElementById("messages");
+            container.appendChild(div);
+            container.scrollTop = container.scrollHeight;
+        };
+    }
+
+    function send() {
+        const input = document.getElementById("msg");
+        if (ws && input.value !== "") {
+            ws.send(input.value);
+            input.value = "";
+        }
+    }
+</script>
+
+</body>
+</html>
